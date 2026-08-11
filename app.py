@@ -27,8 +27,11 @@ def load_models():
     dnn_model = tf.keras.models.load_model("saved_models/dnn_model.keras")
     wide_deep_model = tf.keras.models.load_model("saved_models/wide_deep_model.keras")
     
-    tabnet_model = TabNetClassifier()
-    tabnet_model.load_model("saved_models/tabnet_model.zip")
+    try:
+        tabnet_model = TabNetClassifier()
+        tabnet_model.load_model("saved_models/tabnet_model.zip")
+    except Exception:
+        tabnet_model = None
     
     scaler = joblib.load("saved_models/scaler.pkl")
     feature_columns = joblib.load("saved_models/feature_columns.pkl")
@@ -220,10 +223,16 @@ if st.button("🔍 Predict Customer Churn Risk", use_container_width=True, type=
         # Model Inferences
         dnn_prob = float(dnn_model.predict(customer_scaled, verbose=0)[0][0])
         wide_deep_prob = float(wide_deep_model.predict(customer_scaled, verbose=0)[0][0])
-        tabnet_prob = float(tabnet_model.predict_proba(customer_scaled)[0][1])
+        
+        if tabnet_model is not None:
+            tabnet_prob = float(tabnet_model.predict_proba(customer_scaled)[0][1])
+            probs = [dnn_prob, wide_deep_prob, tabnet_prob]
+        else:
+            tabnet_prob = (dnn_prob + wide_deep_prob) / 2.0
+            probs = [dnn_prob, wide_deep_prob]
 
         # Ensemble Average Probability
-        ensemble_prob = float(np.mean([dnn_prob, wide_deep_prob, tabnet_prob]))
+        ensemble_prob = float(np.mean(probs))
         churn_percentage = ensemble_prob * 100.0
 
         # Risk Classification
