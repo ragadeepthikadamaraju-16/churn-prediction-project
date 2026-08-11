@@ -94,10 +94,16 @@ Provide a structured, executive retention strategy with these 5 concise sections
 Keep the response practical, professional, concise, and business-focused.
 """
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
-        )
+        try:
+            response = client.models.generate_content(
+                model="gemini-3.6-flash",
+                contents=prompt
+            )
+        except Exception:
+            response = client.models.generate_content(
+                model="gemini-flash-latest",
+                contents=prompt
+            )
 
         return response.text
 
