@@ -3,7 +3,7 @@ pandas
 numpy
 scikit-learn
 joblib
-tensorflow
+tensorflow-cpu
 torch
 pytorch-tabnet
 google-genai
