@@ -1,0 +1,2 @@
+customer_id,timestamp,gender,senior_citizen,partner,dependents,tenure,phone_service,multiple_lines,internet_service,online_security,online_backup,device_protection,tech_support,streaming_tv,streaming_movies,contract,paperless_billing,payment_method,monthly_charges,total_charges,dnn_prob,wide_deep_prob,tabnet_prob,ensemble_prob,prediction,risk_level
+CUST-1058,2026-08-14 19:46:22,Female,Yes,Yes,Yes,12,Yes,No,Fiber optic,No,No,No,No,No,No,Month-to-month,Yes,Electronic check,70.0,840.0,51.22,22.55,41.31,38.36,No Churn,LOW

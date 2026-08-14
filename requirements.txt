@@ -7,3 +7,7 @@ google-genai
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch
 pytorch-tabnet
+matplotlib
+seaborn
+plotly
+
