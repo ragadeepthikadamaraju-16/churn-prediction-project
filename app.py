@@ -326,19 +326,21 @@ if page == "📊 Dashboard & Analytics":
 
     st.divider()
 
-    # Visualizations Row 1
+    # Visualizations Row 1 (Bar Graphs)
     col1, col2 = st.columns(2)
 
     with col1:
         st.subheader("Customer Churn Distribution (Telco Dataset)")
         churn_counts = telco_df['Churn'].value_counts().reset_index()
-        churn_counts.columns = ['Churn', 'Count']
-        fig_churn = px.pie(
-            churn_counts, names='Churn', values='Count',
-            color='Churn',
+        churn_counts.columns = ['Churn Status', 'Count']
+        fig_churn = px.bar(
+            churn_counts, x='Churn Status', y='Count',
+            color='Churn Status',
             color_discrete_map={'No': '#10B981', 'Yes': '#EF4444'},
-            hole=0.4, title="Telco Dataset Churn Rate (26.5% Base Churn)"
+            text='Count',
+            title="Overall Customer Churn Count Breakdown (No vs Yes)"
         )
+        fig_churn.update_traces(textposition='outside')
         st.plotly_chart(fig_churn, use_container_width=True)
 
     with col2:
@@ -352,30 +354,41 @@ if page == "📊 Dashboard & Analytics":
         )
         st.plotly_chart(fig_contract, use_container_width=True)
 
-    # Visualizations Row 2
+    # Visualizations Row 2 (Bar Graphs)
     col3, col4 = st.columns(2)
 
     with col3:
-        st.subheader("Monthly Charges Distribution vs Churn")
-        fig_charges = px.histogram(
-            telco_df, x="MonthlyCharges", color="Churn",
-            marginal="box", barmode="overlay",
+        st.subheader("Monthly Charges Range vs Churn")
+        df_temp = telco_df.copy()
+        df_temp['MonthlyChargesRange'] = pd.cut(
+            df_temp['MonthlyCharges'], bins=[0, 35, 70, 100, 150],
+            labels=['$0 - $35', '$35 - $70', '$70 - $100', '$100+']
+        )
+        charges_churn = df_temp.groupby(['MonthlyChargesRange', 'Churn'], observed=False).size().reset_index(name='Count')
+        fig_charges = px.bar(
+            charges_churn, x="MonthlyChargesRange", y="Count", color="Churn",
+            barmode="group",
             color_discrete_map={'No': '#10B981', 'Yes': '#EF4444'},
-            title="Monthly Charges ($) Density by Churn Status"
+            title="Monthly Charges Range vs Churn Breakdown"
         )
         st.plotly_chart(fig_charges, use_container_width=True)
 
     with col4:
-        st.subheader("Tenure (Months) Distribution vs Churn")
-        fig_tenure = px.histogram(
-            telco_df, x="tenure", color="Churn",
-            marginal="box", barmode="overlay",
+        st.subheader("Tenure Duration Group vs Churn")
+        df_temp['TenureGroup'] = pd.cut(
+            df_temp['tenure'], bins=[-1, 12, 24, 48, 72],
+            labels=['0 - 12 Months', '12 - 24 Months', '24 - 48 Months', '48 - 72 Months']
+        )
+        tenure_churn = df_temp.groupby(['TenureGroup', 'Churn'], observed=False).size().reset_index(name='Count')
+        fig_tenure = px.bar(
+            tenure_churn, x="TenureGroup", y="Count", color="Churn",
+            barmode="group",
             color_discrete_map={'No': '#3B82F6', 'Yes': '#F97316'},
-            title="Customer Tenure Duration Density"
+            title="Customer Tenure Duration vs Churn Breakdown"
         )
         st.plotly_chart(fig_tenure, use_container_width=True)
 
-    # Visualizations Row 3: Internet Service & Payment Method
+    # Visualizations Row 3: Internet Service & Payment Method (Bar Graphs)
     col5, col6 = st.columns(2)
 
     with col5:
@@ -582,44 +595,32 @@ elif page == "🔮 Single Customer Prediction":
         with mcol4:
             st.metric("Wide & Deep Prob", f"{res['predictions']['wide_deep']*100:.1f}%")
 
-        # Gauge Chart & Model Breakdown
-        gcol1, gcol2 = st.columns([1, 1])
+        # Bar Graph Comparison across Models
+        gcol1, gcol2 = st.columns([1.2, 0.8])
 
         with gcol1:
-            fig_gauge = go.Figure(go.Indicator(
-                mode="gauge+number",
-                value=res['churn_pct'],
-                domain={'x': [0, 1], 'y': [0, 1]},
-                title={'text': "Blended Core Ensemble Churn Probability (%)"},
-                gauge={
-                    'axis': {'range': [0, 100]},
-                    'bar': {'color': "#1E3A8A"},
-                    'steps': [
-                        {'range': [0, 40], 'color': "#D1FAE5"},
-                        {'range': [40, 70], 'color': "#FEF3C7"},
-                        {'range': [70, 100], 'color': "#FEE2E2"}
-                    ],
-                    'threshold': {
-                        'line': {'color': "red", 'width': 4},
-                        'thickness': 0.75,
-                        'value': res['churn_pct']
-                    }
-                }
-            ))
-            fig_gauge.update_layout(height=280)
-            st.plotly_chart(fig_gauge, use_container_width=True)
-
-        with gcol2:
-            st.subheader("Core Models Prediction Breakdown")
             breakdown_df = pd.DataFrame({
-                "Model Architecture": ["Deep Neural Network (DNN)", "Wide & Deep Architecture", "TabNet Classifier", "Blended Ensemble"],
-                "Predicted Churn Prob": [
-                    f"{res['predictions']['dnn']*100:.1f}%",
-                    f"{res['predictions']['wide_deep']*100:.1f}%",
-                    f"{res['predictions']['tabnet']*100:.1f}%",
-                    f"{res['predictions']['ensemble']*100:.1f}%"
+                "Model Architecture": ["ResNet DNN", "Wide & Deep", "TabNet", "Blended Ensemble"],
+                "Churn Probability (%)": [
+                    res['predictions']['dnn'] * 100,
+                    res['predictions']['wide_deep'] * 100,
+                    res['predictions']['tabnet'] * 100,
+                    res['predictions']['ensemble'] * 100
                 ]
             })
+            fig_prob_bar = px.bar(
+                breakdown_df, x="Model Architecture", y="Churn Probability (%)",
+                color="Model Architecture",
+                color_discrete_sequence=["#3B82F6", "#6366F1", "#8B5CF6", "#1E3A8A"],
+                text="Churn Probability (%)",
+                title="Model Churn Probability Comparison (Bar Chart)"
+            )
+            fig_prob_bar.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
+            fig_prob_bar.update_layout(yaxis_range=[0, 100])
+            st.plotly_chart(fig_prob_bar, use_container_width=True)
+
+        with gcol2:
+            st.subheader("Model Prediction Data")
             st.dataframe(breakdown_df, use_container_width=True, hide_index=True)
 
         # Risk Callout Box
@@ -740,10 +741,10 @@ elif page == "🎯 Model Performance":
 
         st.divider()
 
-        # Visual Comparison Charts
+        # Visual Comparison Charts (Bar Graphs)
         col1, col2 = st.columns(2)
         with col1:
-            st.subheader("Model Test Accuracy Comparison")
+            st.subheader("Model Test Accuracy Comparison (Bar Chart)")
             acc_list = []
             model_names = []
             for name, key in [("Ensemble", "ensemble"), ("DNN", "dnn"), ("Wide & Deep", "wide_deep"), ("TabNet", "tabnet")]:
@@ -759,12 +760,14 @@ elif page == "🎯 Model Performance":
                 acc_df, x="Model", y="Test Accuracy (%)",
                 color="Test Accuracy (%)",
                 color_continuous_scale="Blues",
-                title="Model Test Accuracy Comparison (Target: 80%+)"
+                text="Test Accuracy (%)",
+                title="Model Test Accuracy Comparison (Bar Chart)"
             )
+            fig_acc.update_traces(texttemplate='%{text:.2f}%', textposition='outside')
             st.plotly_chart(fig_acc, use_container_width=True)
 
         with col2:
-            st.subheader("Model ROC-AUC & F1-Score")
+            st.subheader("Model ROC-AUC & F1-Score (Bar Chart)")
             f1_list = []
             auc_list = []
             model_names_2 = []
@@ -782,7 +785,7 @@ elif page == "🎯 Model Performance":
             fig_f1 = px.bar(
                 f1_df, x="Model", y=["F1-Score", "ROC-AUC"],
                 barmode="group", color_discrete_sequence=["#F59E0B", "#10B981"],
-                title="F1-Score and ROC-AUC Performance"
+                title="F1-Score and ROC-AUC Performance (Grouped Bar Chart)"
             )
             st.plotly_chart(fig_f1, use_container_width=True)
 
