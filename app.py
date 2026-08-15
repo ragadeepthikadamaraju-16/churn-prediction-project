@@ -272,29 +272,13 @@ page = st.sidebar.radio(
 )
 
 st.sidebar.divider()
-st.sidebar.subheader("📊 Model Accuracy Comparison")
-
-# Sidebar Bar Graph for Model Accuracies
-side_acc_df = pd.DataFrame({
-    "Model": ["TabNet", "Wide & Deep", "ResNet DNN", "3-Model Ensemble"],
-    "Accuracy (%)": [78.61, 78.82, 79.03, 80.03]
-})
-fig_side = px.bar(
-    side_acc_df, x="Accuracy (%)", y="Model", orientation='h',
-    text="Accuracy (%)",
-    color="Accuracy (%)",
-    color_continuous_scale="Blues",
-    title="Verified Model Accuracies (%)"
+st.sidebar.info(
+    "**Verified Test Accuracies**\n\n"
+    "• **3-Model Ensemble**: **80.03%**\n"
+    "• **ResNet DNN**: **79.03%**\n"
+    "• **Wide & Deep**: **78.82%**\n"
+    "• **TabNet**: **78.61%**"
 )
-fig_side.update_traces(texttemplate='%{text:.2f}%', textposition='inside')
-fig_side.update_layout(
-    height=240, margin=dict(l=5, r=5, t=30, b=5),
-    xaxis=dict(range=[70, 85], showticklabels=False),
-    yaxis=dict(autorange="reversed"),
-    showlegend=False,
-    coloraxis_showscale=False
-)
-st.sidebar.plotly_chart(fig_side, use_container_width=True)
 
 
 # =========================================================
@@ -342,8 +326,8 @@ if page == "📊 Dashboard & Analytics":
 
     st.divider()
 
-    # Prominent Model Accuracies Bar Graph
-    st.subheader("🎯 Model Test Accuracy Comparison (Bar Graph)")
+    # Unified Single Model Accuracy Comparison Bar Chart
+    st.subheader("🎯 Model Test Accuracy Comparison")
     overview_acc_df = pd.DataFrame({
         "Model Architecture": [
             "TabNet Classifier",
@@ -356,7 +340,7 @@ if page == "📊 Dashboard & Analytics":
     fig_overview_acc = px.bar(
         overview_acc_df, x="Model Architecture", y="Test Accuracy (%)",
         color="Test Accuracy (%)",
-        color_continuous_scale="Viridis",
+        color_continuous_scale="Blues",
         text="Test Accuracy (%)",
         title="Deployed Models Held-Out Test Set Accuracy Comparison (%)"
     )
@@ -779,26 +763,14 @@ elif page == "🎯 Model Performance":
         )
         st.plotly_chart(fig_f1, use_container_width=True)
 
-    # Model Selection & Update Audit Log Bar Chart
+    # Model Selection & Update Audit Log
     st.divider()
-    st.subheader("🛡️ Model Selection & Update Audit Log (Bar Graph)")
-    
-    audit_df = pd.DataFrame({
-        "Model": ["TabNet", "Wide & Deep", "ResNet DNN", "3-Model Ensemble"],
-        "Achieved Accuracy (%)": [78.61, 78.82, 79.03, 80.03],
-        "Status": ["Tuned & Deployed (78.61%)", "Tuned & Deployed (78.82%)", "Tuned & Deployed (79.03%)", "Peak Ensemble (80.03%)"]
-    })
-    
-    fig_audit_bar = px.bar(
-        audit_df, x="Model", y="Achieved Accuracy (%)",
-        color="Model",
-        color_discrete_sequence=["#3B82F6", "#6366F1", "#8B5CF6", "#10B981"],
-        text="Status",
-        title="Model Upgrade & Accuracy Audit Log (Bar Graph)"
-    )
-    fig_audit_bar.update_traces(textposition='outside')
-    fig_audit_bar.update_layout(yaxis_range=[70, 85])
-    st.plotly_chart(fig_audit_bar, use_container_width=True)
+    st.subheader("🛡️ Model Selection & Update Audit Log")
+    if metrics_summary:
+        updates = metrics_summary.get("updates_log", {})
+        for model_k, info in updates.items():
+            status_str = "✅ REPLACED WITH TUNED MODEL" if info["updated"] else "🔒 RETAINED BASELINE WORKING MODEL"
+            st.markdown(f"• **{model_k.upper()}**: {status_str} — *Reason: {info['reason']}*")
 
 
 # =========================================================
