@@ -271,14 +271,7 @@ page = st.sidebar.radio(
     ]
 )
 
-st.sidebar.divider()
-st.sidebar.info(
-    "**Verified Test Accuracies**\n\n"
-    "• **3-Model Ensemble**: **80.03%**\n"
-    "• **ResNet DNN**: **79.03%**\n"
-    "• **Wide & Deep**: **78.82%**\n"
-    "• **TabNet**: **78.61%**"
-)
+
 
 
 # =========================================================
