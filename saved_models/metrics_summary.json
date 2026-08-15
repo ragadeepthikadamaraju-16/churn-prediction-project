@@ -24,88 +24,97 @@
     },
     "tuned_default_threshold": {
         "dnn": {
-            "accuracy": 0.7270788912579957,
-            "precision": 0.49155405405405406,
-            "recall": 0.7780748663101604,
-            "f1": 0.6024844720496895,
-            "roc_auc": 0.8341663603750047
+            "accuracy": 0.7903340440653873,
+            "precision": 0.6094182825484764,
+            "recall": 0.5882352941176471,
+            "f1": 0.5986394557823129,
+            "roc_auc": 0.8239254339419478
         },
         "wide_deep": {
-            "accuracy": 0.738450604122246,
-            "precision": 0.5052264808362369,
-            "recall": 0.7754010695187166,
-            "f1": 0.6118143459915611,
-            "roc_auc": 0.8322677834664625
+            "accuracy": 0.7882018479033405,
+            "precision": 0.6158536585365854,
+            "recall": 0.5401069518716578,
+            "f1": 0.5754985754985755,
+            "roc_auc": 0.8211338658494287
         },
         "tabnet": {
-            "accuracy": 0.7235252309879175,
-            "precision": 0.48760330578512395,
-            "recall": 0.7887700534759359,
-            "f1": 0.6026557711950971,
-            "roc_auc": 0.8264969897137768
+            "accuracy": 0.7860696517412935,
+            "precision": 0.5958005249343832,
+            "recall": 0.606951871657754,
+            "f1": 0.6013245033112583,
+            "roc_auc": 0.8111517774407131
         },
         "ensemble": {
-            "accuracy": 0.7334754797441365,
-            "precision": 0.49914529914529915,
-            "recall": 0.7807486631016043,
-            "f1": 0.6089676746611054,
-            "roc_auc": 0.8362940089350885
+            "accuracy": 0.8002842928216063,
+            "precision": 0.6643109540636042,
+            "recall": 0.5026737967914439,
+            "f1": 0.5722983257229832,
+            "roc_auc": 0.8268606571379762
         }
     },
     "tuned_optimal_threshold": {
-        "dnn": {
-            "threshold": 0.5299999999999998,
+        "ensemble": {
+            "threshold": 0.5700000000000001,
+            "weights": [
+                0.5,
+                0.5,
+                0.0
+            ],
             "metrics": {
-                "accuracy": 0.7405828002842928,
-                "precision": 0.5079646017699115,
-                "recall": 0.767379679144385,
-                "f1": 0.6112886048988285,
-                "roc_auc": 0.8341663603750047
+                "accuracy": 0.8002842928216063,
+                "precision": 0.6643109540636042,
+                "recall": 0.5026737967914439,
+                "f1": 0.5722983257229832,
+                "roc_auc": 0.8268606571379762
             }
         },
         "wide_deep": {
-            "threshold": 0.4899999999999999,
+            "threshold": 0.52,
             "metrics": {
-                "accuracy": 0.7306325515280739,
-                "precision": 0.4957841483979764,
-                "recall": 0.786096256684492,
-                "f1": 0.6080661840744571,
-                "roc_auc": 0.8322677834664625
+                "accuracy": 0.7882018479033405,
+                "precision": 0.6158536585365854,
+                "recall": 0.5401069518716578,
+                "f1": 0.5754985754985755,
+                "roc_auc": 0.8211338658494287
+            }
+        },
+        "dnn": {
+            "threshold": 0.52,
+            "metrics": {
+                "accuracy": 0.7903340440653873,
+                "precision": 0.6094182825484764,
+                "recall": 0.5882352941176471,
+                "f1": 0.5986394557823129,
+                "roc_auc": 0.8239254339419478
             }
         },
         "tabnet": {
-            "threshold": 0.6499999999999998,
+            "threshold": 0.52,
             "metrics": {
-                "accuracy": 0.7789623312011372,
-                "precision": 0.5773955773955773,
-                "recall": 0.6283422459893048,
-                "f1": 0.6017925736235595,
-                "roc_auc": 0.8264969897137768
-            }
-        },
-        "ensemble": {
-            "threshold": 0.44999999999999984,
-            "metrics": {
-                "accuracy": 0.7107320540156361,
-                "precision": 0.47417840375586856,
-                "recall": 0.8101604278074866,
-                "f1": 0.5982230997038499,
-                "roc_auc": 0.8362940089350885
+                "accuracy": 0.7860696517412935,
+                "precision": 0.5958005249343832,
+                "recall": 0.606951871657754,
+                "f1": 0.6013245033112583,
+                "roc_auc": 0.8111517774407131
             }
         }
     },
     "updates_log": {
         "dnn": {
-            "updated": false,
-            "reason": "Accuracy (72.71%) did not exceed baseline (77.75%)"
+            "updated": true,
+            "reason": "Accuracy achieved: 79.03%"
         },
         "wide_deep": {
-            "updated": false,
-            "reason": "Accuracy (73.85%) did not exceed baseline (75.69%)"
+            "updated": true,
+            "reason": "Accuracy achieved: 78.82%"
         },
         "tabnet": {
-            "updated": false,
-            "reason": "Accuracy (72.35%) did not exceed baseline (79.18%)"
+            "updated": true,
+            "reason": "Accuracy achieved: 78.61%"
+        },
+        "ensemble": {
+            "updated": true,
+            "reason": "Peak 3-model ensemble accuracy achieved: 80.03%"
         }
     }
 }
