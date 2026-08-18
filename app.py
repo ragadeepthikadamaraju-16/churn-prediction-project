@@ -431,10 +431,7 @@ if page == "📊 Dashboard & Analytics":
         fig_pay.update_layout(xaxis_tickangle=-15)
         st.plotly_chart(fig_pay, use_container_width=True)
 
-    # Dataset Explorer
-    st.divider()
-    st.subheader("🔍 Telco Customer Dataset Explorer")
-    st.dataframe(telco_df.head(100), use_container_width=True)
+
 
 
 # =========================================================
